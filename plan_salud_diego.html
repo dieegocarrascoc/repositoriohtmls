@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Churro — Plan de Salud · Diego Carrasco</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --card-alt: #222633;
+  --accent: #22d3ee;
+  --accent-dim: rgba(34,211,238,0.12);
+  --green: #34d399;
+  --green-dim: rgba(52,211,153,0.12);
+  --yellow: #fbbf24;
+  --yellow-dim: rgba(251,191,36,0.12);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.12);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.12);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.12);
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --border: #2d3348;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 960px; margin: 0 auto; }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #0f1117 0%, #1a1d27 50%, #0f1117 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 32px 20px;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-top { display: flex; align-items: center; gap: 14; margin-bottom: 14; }
+.logo-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;
+}
+.header-title {
+  font-size: 24px; font-weight: 800;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-sub { color: var(--text-dim); font-size: 13px; }
+
+/* Nav Tabs */
+.nav-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.nav-tabs::-webkit-scrollbar { height: 0; }
+.nav-btn {
+  background: rgba(255,255,255,0.05); color: var(--text-dim);
+  border: none; border-radius: 10px; padding: 8px 16px; font-size: 13px;
+  font-weight: 500; cursor: pointer; white-space: nowrap; transition: all .2s;
+  font-family: inherit;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.1); }
+.nav-btn.active { background: var(--accent); color: var(--bg); font-weight: 700; }
+
+/* Main */
+main { padding: 28px 32px 60px; }
+
+/* Cards */
+.card {
+  background: var(--card); border-radius: 16px; padding: 24px 28px;
+  border: 1px solid var(--border); transition: all .2s;
+}
+.card-alt { background: var(--card-alt); }
+.card + .card { margin-top: 16px; }
+.card-mb { margin-bottom: 20px; }
+
+/* Badges */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+h2.section-title { color: var(--accent); font-size: 26px; font-weight: 800; margin: 0 0 8px; }
+.section-desc { color: var(--text-dim); font-size: 14px; margin: 0 0 24px; line-height: 1.6; }
+
+/* Profile Grid */
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.stat-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px !important; }
+.stat-icon { font-size: 28px; flex-shrink: 0; }
+.stat-label { color: var(--text-dim); font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.stat-value { color: var(--text); font-size: 17px; font-weight: 700; margin-top: 2px; }
+
+/* Indicators */
+.indicator {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.indicator:last-child { border-bottom: none; }
+.ind-label { color: var(--text); font-size: 14px; font-weight: 600; }
+.ind-note { color: var(--text-dim); font-size: 12px; margin-top: 2px; }
+.ind-value { text-align: right; margin-right: 16px; }
+.ind-val { font-weight: 700; font-size: 16px; }
+.ind-ref { color: var(--text-dim); font-size: 11px; }
+
+/* Progress Bars */
+.progress-item { margin-bottom: 14px; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.progress-label { color: var(--text-dim); font-size: 13px; }
+.progress-val { font-size: 13px; font-weight: 600; }
+.progress-track { background: rgba(255,255,255,0.06); border-radius: 8px; height: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 8px; transition: width .6s ease; }
+
+/* Collapsible */
+.collapsible-header {
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+}
+.collapsible-arrow { color: var(--text-dim); font-size: 18px; transition: transform .2s; }
+.collapsible-arrow.open { transform: rotate(180deg); }
+.collapsible-body { display: none; margin-top: 16px; }
+.collapsible-body.open { display: block; animation: fadeIn .25s ease; }
+
+/* Meal / Exercise Row */
+.meal-row, .exercise-row {
+  padding: 14px 0; border-top: 1px solid var(--border);
+}
+.meal-row:first-child, .exercise-row:first-child { border-top: none; }
+.meal-time { color: var(--accent); font-weight: 700; font-size: 13px; margin-right: 8px; }
+.meal-name { color: var(--text); font-weight: 600; font-size: 14px; }
+.meal-cal { color: var(--text-dim); font-size: 12px; }
+.meal-items { color: var(--text); font-size: 13px; line-height: 1.6; margin: 6px 0; }
+.meal-why { color: var(--purple); font-size: 12px; font-style: italic; }
+
+.exercise-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ex-name { color: var(--text); font-size: 14px; font-weight: 600; }
+.ex-note { color: var(--purple); font-size: 12px; margin-top: 3px; }
+.ex-sets { color: var(--accent); font-weight: 700; font-size: 14px; text-align: right; }
+.ex-rest { color: var(--text-dim); font-size: 11px; }
+
+/* Roadmap Timeline */
+.timeline { position: relative; padding-left: 50px; }
+.timeline::before {
+  content: ''; position: absolute; left: 18px; top: 0; bottom: 0;
+  width: 3px; background: var(--border); border-radius: 2px;
+}
+.timeline-item { position: relative; margin-bottom: 24px; }
+.timeline-dot {
+  position: absolute; left: -42px; top: 4px; width: 24px; height: 24px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: var(--bg);
+}
+
+/* Supplement Card */
+.supp-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.supp-meta-box { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 14px; }
+.supp-meta-label { color: var(--text-dim); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.supp-meta-value { font-size: 14px; font-weight: 600; margin-top: 2px; }
+
+/* Two columns */
+.two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 640px) { .two-cols { grid-template-columns: 1fr; } }
+
+/* Gradient cards */
+.grad-green-cyan { background: linear-gradient(135deg, var(--green-dim), var(--accent-dim)); }
+.grad-purple-cyan { background: linear-gradient(135deg, var(--purple-dim), var(--accent-dim)); }
+.grad-orange-yellow { background: linear-gradient(135deg, var(--orange-dim), var(--yellow-dim)); }
+
+/* Chart containers */
+.weight-chart { position: relative; height: 200px; overflow: hidden; }
+.steps-chart { display: flex; align-items: flex-end; gap: 2px; height: 120px; }
+.step-bar { flex: 1; border-radius: 3px 3px 0 0; opacity: 0.7; min-width: 4px; transition: height .3s; }
+
+/* Lists */
+ul.styled { list-style: disc; padding-left: 20px; color: var(--text-dim); font-size: 14px; line-height: 2; }
+ul.styled li strong { color: var(--text); }
+ul.content-list { list-style: disc; padding-left: 18px; color: var(--text); font-size: 13px; line-height: 2; }
+
+/* Meta goal grid */
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+.goal-box {
+  background: rgba(0,0,0,0.2); border-radius: 10px; padding: 12px 14px; text-align: center;
+}
+.goal-label { color: var(--text-dim); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.goal-from { color: var(--red); font-size: 14px; text-decoration: line-through; margin: 4px 0; }
+.goal-to { color: var(--green); font-size: 17px; font-weight: 800; }
+
+/* KPI box */
+.kpi-box { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 14px; margin-top: 12px; }
+.kpi-label { color: var(--text-dim); font-size: 12px; }
+.kpi-val { font-size: 13px; font-weight: 600; }
+
+/* Flex utilities */
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center { display: flex; align-items: center; }
+.gap-10 { gap: 10px; }
+.mt-10 { margin-top: 10px; }
+.mt-16 { margin-top: 16px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+
+/* Footer */
+footer { border-top: 1px solid var(--border); padding: 20px 32px; text-align: center; }
+footer p { color: var(--text-dim); font-size: 12px; line-height: 1.6; }
+
+/* Scroll */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+@media (max-width: 640px) {
+  header, main { padding-left: 16px; padding-right: 16px; }
+  .card { padding: 18px 16px; }
+  .profile-grid { grid-template-columns: 1fr 1fr; }
+  .header-title { font-size: 19px; }
+  .supp-meta { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="header-top">
+      <div class="logo-icon">🩺</div>
+      <div>
+        <div class="header-title">Dr. Churro — Plan de Salud</div>
+        <div class="header-sub">Diego Carrasco · Plan definitivo · Marzo 2026</div>
+      </div>
+    </div>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-btn active" data-section="profile">👤 Mi Perfil</button>
+      <button class="nav-btn" data-section="diagnosis">🔬 Diagnóstico</button>
+      <button class="nav-btn" data-section="nutrition">🥗 Alimentación</button>
+      <button class="nav-btn" data-section="training">🏋️ Entrenamiento</button>
+      <button class="nav-btn" data-section="supplements">💊 Suplementos</button>
+      <button class="nav-btn" data-section="roadmap">🗺️ Roadmap</button>
+      <button class="nav-btn" data-section="metrics">📊 Mis Datos</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <!-- ============ PROFILE ============ -->
+    <div class="section active" id="sec-profile">
+      <h2 class="section-title">Diego Carrasco — Perfil de Salud</h2>
+      <p class="section-desc">Datos consolidados de tus exámenes, composición corporal y actividad física.</p>
+      <div class="profile-grid">
+        <div class="card stat-card"><span class="stat-icon">🎂</span><div><div class="stat-label">Edad</div><div class="stat-value">30 años</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">♂️</span><div><div class="stat-label">Sexo</div><div class="stat-value">Masculino</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">📏</span><div><div class="stat-label">Altura estimada</div><div class="stat-value">~1.72 m</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">⚖️</span><div><div class="stat-label">Peso actual</div><div class="stat-value">79.15 kg</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">📐</span><div><div class="stat-label">IMC</div><div class="stat-value">26.8 (Sobrepeso)</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">🔥</span><div><div class="stat-label">% Grasa</div><div class="stat-value">25.1%</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">💪</span><div><div class="stat-label">Masa magra</div><div class="stat-value">59.3 kg</div></div></div>
+        <div class="card stat-card"><span class="stat-icon">⚡</span><div><div class="stat-label">TMB</div><div class="stat-value">1,840 kcal/día</div></div></div>
+      </div>
+      <div class="card card-alt">
+        <div class="flex-center gap-10 mb-12"><span style="font-size:20px">📋</span><span style="font-weight:700;font-size:16px">Antecedentes relevantes</span></div>
+        <ul class="styled">
+          <li><strong>Colecistectomía</strong> — sin vesícula biliar (afecta digestión de grasas)</li>
+          <li><strong style="color:var(--yellow)">Hígado graso leve difuso</strong> — detectado enero 2026 (no estaba en junio 2025)</li>
+          <li><strong style="color:var(--yellow)">Bilirrubina elevada crónica</strong> — patrón compatible con Síndrome de Gilbert (benigno)</li>
+          <li><strong>Trabajo de oficina</strong> — sedentarismo como factor de riesgo principal</li>
+          <li><strong>Anticuerpos anti-endomisio negativos</strong> — se descartó enfermedad celíaca</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ DIAGNOSIS ============ -->
+    <div class="section" id="sec-diagnosis">
+      <h2 class="section-title">Diagnóstico Basado en Exámenes</h2>
+      <p class="section-desc">Comparativa entre mayo 2025 y enero 2026. Lo que está en verde es favorable; lo en amarillo o rojo requiere acción.</p>
+
+      <div class="card card-mb">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">🫁 Función Hepática</h3>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">SGOT</div><div class="ind-note">Antes: 31. Estable y normal</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">33 U/L</span><div class="ind-ref">&lt; 50</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">SGPT</div><div class="ind-note">Antes: 28. Leve aumento pero normal</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">32 U/L</span><div class="ind-ref">&lt; 50</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">GGT</div><div class="ind-note">Antes: 14. Mejoró — descarta daño por alcohol</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">10 U/L</span><div class="ind-ref">&lt; 60</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Bilirrubina Total</div><div class="ind-note">Patrón crónico elevado → Probable Snd. de Gilbert</div></div><div class="ind-value"><span class="ind-val" style="color:var(--orange)">2.4 mg/dL</span><div class="ind-ref">&lt; 1.0</div></div><span class="badge" style="background:var(--orange-dim);color:var(--orange)">Atención</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Bilirrubina Directa</div><div class="ind-note">Antes: 0.55. Leve aumento</div></div><div class="ind-value"><span class="ind-val" style="color:var(--yellow)">0.62 mg/dL</span><div class="ind-ref">&lt; 0.3</div></div><span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">Vigilar</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Índice FIB-4</div><div class="ind-note">Sin fibrosis hepática significativa</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">0.64</span><div class="ind-ref">&lt; 1.30</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator" style="border-bottom:none"><div style="flex:1"><div class="ind-label">Ecografía Abdominal</div><div class="ind-note">No estaba en eco de junio 2025 → Nuevo hallazgo</div></div><div class="ind-value"><span class="ind-val" style="color:var(--orange)">Hígado graso leve</span><div class="ind-ref">Normal</div></div><span class="badge" style="background:var(--orange-dim);color:var(--orange)">Atención</span></div>
+      </div>
+
+      <div class="card card-mb">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">🩸 Perfil Metabólico</h3>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Glucosa</div><div class="ind-note">Excelente control glucémico</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">83 mg/dL</span><div class="ind-ref">70-99</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">HbA1c</div><div class="ind-note">Muy bien — sin riesgo diabético</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">3.9%</span><div class="ind-ref">&lt; 5.7%</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Insulina</div><div class="ind-note">Normal. HOMA-IR estimado: ~1.74 (borderline)</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">8.5 uUI/mL</span><div class="ind-ref">2.6-24.9</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Colesterol Total</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">161 mg/dL</span><div class="ind-ref">&lt; 200</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">HDL</div><div class="ind-note">Excelente — protector cardiovascular</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">65 mg/dL</span><div class="ind-ref">≥ 60</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">LDL</div><div class="ind-note">Óptimo</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">80 mg/dL</span><div class="ind-ref">&lt; 100</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator" style="border-bottom:none"><div style="flex:1"><div class="ind-label">Triglicéridos</div><div class="ind-note">Excelente</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">80 mg/dL</span><div class="ind-ref">&lt; 150</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+      </div>
+
+      <div class="card card-mb">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">🧪 Otros Indicadores Clave</h3>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Vitamina D</div><div class="ind-note">Borderline bajo — hay que subir a ≥40</div></div><div class="ind-value"><span class="ind-val" style="color:var(--yellow)">23.2 ng/mL</span><div class="ind-ref">20-50</div></div><span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">Vigilar</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Ferritina</div><div class="ind-note">Bajó de 412 → mejoró, pero conviene llevar a &lt;300</div></div><div class="ind-value"><span class="ind-val" style="color:var(--yellow)">326 ng/mL</span><div class="ind-ref">30-400</div></div><span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">Vigilar</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Vitamina B12</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">542 pg/mL</span><div class="ind-ref">197-771</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">TSH</div><div class="ind-note">Tiroides normal</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">1.84 uUI/mL</span><div class="ind-ref">0.27-4.20</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator"><div style="flex:1"><div class="ind-label">Creatinina</div><div class="ind-note">Función renal normal (GFR 93)</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">1.07 mg/dL</span><div class="ind-ref">0.70-1.20</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+        <div class="indicator" style="border-bottom:none"><div style="flex:1"><div class="ind-label">Ácido Úrico</div></div><div class="ind-value"><span class="ind-val" style="color:var(--green)">6.5 mg/dL</span><div class="ind-ref">3.6-8.5</div></div><span class="badge" style="background:var(--green-dim);color:var(--green)">Normal</span></div>
+      </div>
+
+      <div class="card grad-green-cyan">
+        <h3 style="color:var(--accent);font-size:16px;font-weight:700;margin-bottom:12px">🎯 Conclusión Diagnóstica</h3>
+        <p style="font-size:14px;line-height:1.8">
+          Tu perfil metabólico general es <strong style="color:var(--green)">excelente</strong> — glucosa, lípidos, tiroides y función renal están en rangos óptimos.
+          Los <strong style="color:var(--yellow)">focos de acción</strong> son: el hígado graso leve (nuevo en 2026, asociado a grasa visceral),
+          la ferritina todavía en rango alto-normal, y la vitamina D insuficiente.
+          Tu HOMA-IR borderline (~1.74) sugiere una resistencia a la insulina incipiente que el ejercicio y la alimentación pueden revertir completamente.
+          La bilirrubina elevada crónica es consistente con un Síndrome de Gilbert (benigno, genético, no requiere tratamiento).
+        </p>
+      </div>
+    </div>
+
+    <!-- ============ NUTRITION ============ -->
+    <div class="section" id="sec-nutrition">
+      <h2 class="section-title">Plan de Alimentación</h2>
+      <p class="section-desc">Diseñado para revertir el hígado graso, optimizar composición corporal y respetar tu colecistectomía.</p>
+
+      <div class="card card-mb grad-green-cyan">
+        <h3 style="color:var(--green);font-size:15px;font-weight:700;margin-bottom:10px">📐 Cálculo Calórico Personalizado</h3>
+        <div style="font-size:14px;line-height:1.9">
+          <div>TMB: <strong>1,840 kcal/día</strong> (dato de tu balanza)</div>
+          <div>Factor actividad (sedentario + 2-3 gym): <strong>×1.4 = 2,576 kcal mantenimiento</strong></div>
+          <div>Déficit moderado (−15-20%): <strong style="color:var(--accent);font-size:17px">~2,060-2,190 kcal/día</strong></div>
+          <div style="color:var(--text-dim);font-size:12px;margin-top:6px">Días de entreno: ~2,100 kcal · Días de descanso: ~1,700 kcal · Promedio semanal: ~1,850 kcal/día</div>
+        </div>
+      </div>
+
+      <div class="card card-mb">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">🎯 Macronutrientes Objetivo</h3>
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Proteína</span><span class="progress-val" style="color:var(--accent)">140g/día (1.8g/kg)</span></div><div class="progress-track"><div class="progress-fill" style="width:70%;background:var(--accent)"></div></div></div>
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Carbohidratos</span><span class="progress-val" style="color:var(--green)">200g/día (complejos)</span></div><div class="progress-track"><div class="progress-fill" style="width:57%;background:var(--green)"></div></div></div>
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Grasas</span><span class="progress-val" style="color:var(--yellow)">65g/día (saludables)</span></div><div class="progress-track"><div class="progress-fill" style="width:65%;background:var(--yellow)"></div></div></div>
+        <p style="color:var(--text-dim);font-size:12px;margin-top:8px">Proteína alta para preservar masa magra. Carbohidratos moderados (complejos) para energía sin picos glucémicos. Grasas fraccionadas en porciones pequeñas por tu colecistectomía.</p>
+      </div>
+
+      <!-- Day 1 -->
+      <div class="card card-mb" id="day1">
+        <div class="collapsible-header" onclick="toggleCollapsible('day1-body','day1-arrow')">
+          <div><h3 style="font-size:15px;font-weight:700">🔥 Día Tipo — Entrenamiento</h3></div>
+          <div class="flex-center gap-10"><span class="badge" style="background:var(--accent-dim);color:var(--accent)">~2,080 kcal</span><span class="collapsible-arrow" id="day1-arrow">▾</span></div>
+        </div>
+        <div class="collapsible-body" id="day1-body">
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">7:30</span><span class="meal-name">Desayuno</span></div><span class="meal-cal">~500 kcal</span></div><div class="meal-items">Avena con arándanos, nueces y semillas de chía · 2 huevos revueltos con espinaca · Café negro o té verde</div><div class="meal-why">💡 Avena = fibra soluble que reduce grasa hepática. Huevos = colina para el hígado. Arándanos = antioxidantes.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">10:30</span><span class="meal-name">Snack AM</span></div><span class="meal-cal">~180 kcal</span></div><div class="meal-items">Manzana verde con 15g mantequilla de almendras</div><div class="meal-why">💡 Fibra + grasas saludables. La manzana verde tiene pectina que ayuda a la función hepática.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">13:00</span><span class="meal-name">Almuerzo</span></div><span class="meal-cal">~650 kcal</span></div><div class="meal-items">150g salmón al horno o pollo · Arroz integral (3/4 taza cocido) · Ensalada grande (lechuga, tomate, palta, zanahoria) · Aceite de oliva extra virgen</div><div class="meal-why">💡 Omega-3 del salmón reduce inflamación hepática. Arroz integral = carbohidratos complejos. Palta = grasas monoinsaturadas.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">16:00</span><span class="meal-name">Pre-entreno</span></div><span class="meal-cal">~200 kcal</span></div><div class="meal-items">Plátano + 20g frutos secos mixtos</div><div class="meal-why">💡 Energía rápida + sostenida para el entrenamiento.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">19:30</span><span class="meal-name">Cena (post-entreno)</span></div><span class="meal-cal">~550 kcal</span></div><div class="meal-items">150g pechuga de pollo o pescado blanco · Batata/camote al horno · Brócoli o espárragos salteados con ajo</div><div class="meal-why">💡 Proteína para recuperación muscular. Batata = carbohidrato de bajo índice glucémico. Brócoli = sulforafano, protege el hígado.</div></div>
+        </div>
+      </div>
+
+      <!-- Day 2 -->
+      <div class="card card-mb" id="day2">
+        <div class="collapsible-header" onclick="toggleCollapsible('day2-body','day2-arrow')">
+          <div><h3 style="font-size:15px;font-weight:700">😴 Día Tipo — Descanso</h3></div>
+          <div class="flex-center gap-10"><span class="badge" style="background:var(--accent-dim);color:var(--accent)">~1,660 kcal</span><span class="collapsible-arrow" id="day2-arrow">▾</span></div>
+        </div>
+        <div class="collapsible-body" id="day2-body">
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">8:00</span><span class="meal-name">Desayuno</span></div><span class="meal-cal">~380 kcal</span></div><div class="meal-items">Tostada integral con palta y huevo pochado · Té verde</div><div class="meal-why">💡 Menor carga calórica en días sin entreno. Té verde tiene catequinas que protegen el hígado.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">11:00</span><span class="meal-name">Snack AM</span></div><span class="meal-cal">~180 kcal</span></div><div class="meal-items">Yogurt griego natural con 5 nueces + canela</div><div class="meal-why">💡 Probióticos mejoran eje intestino-hígado. Canela ayuda a sensibilidad insulínica.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">13:30</span><span class="meal-name">Almuerzo</span></div><span class="meal-cal">~550 kcal</span></div><div class="meal-items">Ensalada mediterránea: atún, garbanzos, tomate, pepino, aceitunas, aceite de oliva · Pan integral (1 rebanada)</div><div class="meal-why">💡 Legumbres = fibra + proteína vegetal. Dieta mediterránea es la más estudiada para revertir hígado graso.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">17:00</span><span class="meal-name">Snack PM</span></div><span class="meal-cal">~150 kcal</span></div><div class="meal-items">Zanahoria y apio con hummus (3 cucharadas)</div><div class="meal-why">💡 Fibra + saciedad sin exceso calórico.</div></div>
+          <div class="meal-row"><div class="flex-between"><div><span class="meal-time">20:00</span><span class="meal-name">Cena</span></div><span class="meal-cal">~400 kcal</span></div><div class="meal-items">Sopa de verduras con pollo desmenuzado · Ensalada verde con limón</div><div class="meal-why">💡 Cena liviana. Sin colecistectomía, las cenas livianas facilitan la digestión de grasas.</div></div>
+        </div>
+      </div>
+
+      <div class="card card-alt">
+        <h3 style="color:var(--orange);font-size:15px;font-weight:700;margin-bottom:12px">⚠️ Reglas de Oro — Hígado Graso + Colecistectomía</h3>
+        <div class="two-cols">
+          <div>
+            <div style="color:var(--green);font-weight:700;font-size:13px;margin-bottom:8px">✅ PRIORIZAR</div>
+            <ul class="content-list">
+              <li>Verduras crucíferas (brócoli, coliflor, repollo)</li>
+              <li>Pescados grasos 2-3x/semana (salmón, sardinas)</li>
+              <li>Aceite de oliva extra virgen como grasa principal</li>
+              <li>Fibra soluble (avena, legumbres, manzanas)</li>
+              <li>Café (2-3 tazas/día) — protector hepático comprobado</li>
+              <li>Cúrcuma y jengibre en preparaciones</li>
+              <li>Agua: mínimo 2.5 L/día</li>
+            </ul>
+          </div>
+          <div>
+            <div style="color:var(--red);font-weight:700;font-size:13px;margin-bottom:8px">❌ REDUCIR/ELIMINAR</div>
+            <ul class="content-list">
+              <li>Azúcar añadida y fructosa (bebidas, jugos, dulces)</li>
+              <li>Alcohol — eliminar por completo (hígado graso)</li>
+              <li>Frituras y comida ultra-procesada</li>
+              <li>Harinas refinadas (pan blanco, pastas refinadas)</li>
+              <li>Comidas grasosas grandes (sin vesícula = fraccionar)</li>
+              <li>Embutidos y carnes procesadas</li>
+              <li>Bebidas azucaradas y jugos envasados</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TRAINING ============ -->
+    <div class="section" id="sec-training">
+      <h2 class="section-title">Plan de Entrenamiento</h2>
+      <p class="section-desc">Programa de 2-3 sesiones/semana en gimnasio. Foco en fuerza compuesta + HIIT para maximizar la pérdida de grasa visceral y proteger tu masa magra.</p>
+
+      <div class="card card-mb grad-purple-cyan">
+        <h3 style="color:var(--purple);font-size:15px;font-weight:700;margin-bottom:10px">🧠 ¿Por qué este enfoque?</h3>
+        <p style="font-size:13px;line-height:1.8">La evidencia para revertir hígado graso muestra que la combinación de <strong>entrenamiento de fuerza + HIIT</strong> es superior al cardio solo. La fuerza preserva tu masa magra (59.3 kg actualmente — queremos mantenerla o subirla mientras baja la grasa), y el HIIT reduce la grasa intrahepática incluso antes de que se vea un cambio en la balanza. Con 2-3 sesiones bien diseñadas es suficiente si la intensidad es adecuada.</p>
+      </div>
+
+      <!-- Day A -->
+      <div class="card card-mb" id="trainA">
+        <div class="collapsible-header" onclick="toggleCollapsible('trainA-body','trainA-arrow')">
+          <div><h3 style="font-size:15px;font-weight:700">Día A — Tren Superior + Core</h3><span style="color:var(--text-dim);font-size:12px">Pecho, Espalda, Hombros, Core</span></div>
+          <span class="collapsible-arrow" id="trainA-arrow">▾</span>
+        </div>
+        <div class="collapsible-body" id="trainA-body">
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Press banca con barra</div><div class="ex-note">💡 Compuesto principal. Si no dominas la técnica, usa mancuernas.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">4×10</div><div class="ex-rest">Descanso: 90s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Remo con barra o máquina</div><div class="ex-note">💡 Balance posterior. Espalda recta siempre.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">4×10</div><div class="ex-rest">Descanso: 90s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Press hombro con mancuernas</div><div class="ex-note">💡 Sentado para proteger espalda baja.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×12</div><div class="ex-rest">Descanso: 75s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Jalón al pecho (polea)</div><div class="ex-note">💡 Dorsales — mejora postura de oficina.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×12</div><div class="ex-rest">Descanso: 75s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Elevaciones laterales</div><div class="ex-note">💡 Peso ligero, controlar el movimiento.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×15</div><div class="ex-rest">Descanso: 60s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Plancha frontal</div><div class="ex-note">💡 Core antiextensión. Clave para grasa visceral.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×45s</div><div class="ex-rest">Descanso: 60s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Plancha lateral</div><div class="ex-note">💡 Oblicuos — estabilización.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">2×30s/lado</div><div class="ex-rest">Descanso: 45s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Dead bug</div><div class="ex-note">💡 Core profundo sin estresar espalda baja.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×10/lado</div><div class="ex-rest">Descanso: 45s</div></div></div>
+        </div>
+      </div>
+
+      <!-- Day B -->
+      <div class="card card-mb" id="trainB">
+        <div class="collapsible-header" onclick="toggleCollapsible('trainB-body','trainB-arrow')">
+          <div><h3 style="font-size:15px;font-weight:700">Día B — Tren Inferior + HIIT</h3><span style="color:var(--text-dim);font-size:12px">Piernas, Glúteos, Cardio metabólico</span></div>
+          <span class="collapsible-arrow" id="trainB-arrow">▾</span>
+        </div>
+        <div class="collapsible-body" id="trainB-body">
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Sentadilla con barra (o goblet)</div><div class="ex-note">💡 Rey de los ejercicios. Mayor gasto calórico y respuesta hormonal.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">4×10</div><div class="ex-rest">Descanso: 120s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Peso muerto rumano</div><div class="ex-note">💡 Isquiotibiales + glúteos. Mejora sensibilidad insulínica.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">4×10</div><div class="ex-rest">Descanso: 90s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Prensa de piernas</div><div class="ex-note">💡 Complemento después del compuesto libre.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×12</div><div class="ex-rest">Descanso: 90s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Zancadas caminando</div><div class="ex-note">💡 Unilateral — equilibrio y estabilidad.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×10/pierna</div><div class="ex-rest">Descanso: 75s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Elevación de pantorrillas</div><div class="ex-note">💡 No descuidar pantorrillas.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×15</div><div class="ex-rest">Descanso: 60s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">HIIT en bicicleta/remo</div><div class="ex-note">💡 12-15 min total. Quema grasa visceral directamente. Mejor evidencia para hígado graso.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">6×30s / 90s</div></div></div>
+        </div>
+      </div>
+
+      <!-- Day C -->
+      <div class="card card-mb" id="trainC">
+        <div class="collapsible-header" onclick="toggleCollapsible('trainC-body','trainC-arrow')">
+          <div><h3 style="font-size:15px;font-weight:700">Día C — Full Body + Cardio (opcional)</h3><span style="color:var(--text-dim);font-size:12px">Circuito completo si entrenas 3x/semana</span></div>
+          <span class="collapsible-arrow" id="trainC-arrow">▾</span>
+        </div>
+        <div class="collapsible-body" id="trainC-body">
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Sentadilla goblet</div><div class="ex-note">💡 Versión ligera del tren inferior.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×12</div><div class="ex-rest">Descanso: 75s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Press mancuernas inclinado</div><div class="ex-note">💡 Pecho superior + tríceps.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×12</div><div class="ex-rest">Descanso: 75s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Remo con mancuerna</div><div class="ex-note">💡 Espalda unilateral.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×10/lado</div><div class="ex-rest">Descanso: 60s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Curl bíceps + extensión tríceps (superset)</div><div class="ex-note">💡 Brazos en superset para eficiencia.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×12 c/u</div><div class="ex-rest">Descanso: 60s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Face pulls</div><div class="ex-note">💡 Salud del hombro y postura.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">3×15</div><div class="ex-rest">Descanso: 60s</div></div></div>
+          <div class="exercise-row"><div style="flex:1"><div class="ex-name">Caminata en cinta inclinada (12% / 5.5 km/h)</div><div class="ex-note">💡 Cardio bajo impacto. Quema grasa sin afectar recuperación.</div></div><div style="text-align:right;min-width:90px"><div class="ex-sets">20 min</div></div></div>
+        </div>
+      </div>
+
+      <div class="card card-alt">
+        <h3 style="color:var(--accent);font-size:15px;font-weight:700;margin-bottom:12px">🚶 NEAT Diario — Tan Importante como el Gym</h3>
+        <p style="font-size:13px;line-height:1.8;margin-bottom:12px">Tu promedio de pasos es ~6,100/día (~43,000/semana). Para alguien con trabajo de oficina y hígado graso, necesitamos subir a <strong style="color:var(--accent)">8,000-10,000 pasos/día</strong>.</p>
+        <p style="color:var(--text-dim);font-size:13px;line-height:1.8"><strong style="color:var(--text)">Estrategias para oficina:</strong> caminar 10 min después de almuerzo, usar escaleras siempre, llamadas telefónicas de pie caminando, alarma cada hora para pararte 5 min, caminata de 20 min antes o después de la jornada laboral.</p>
+      </div>
+    </div>
+
+    <!-- ============ SUPPLEMENTS ============ -->
+    <div class="section" id="sec-supplements">
+      <h2 class="section-title">Suplementación Estratégica</h2>
+      <p class="section-desc">Cada suplemento se justifica por tus exámenes específicos. Nada genérico — solo lo que tu cuerpo necesita.</p>
+
+      <div class="card card-mb">
+        <div class="flex-between mb-12"><h3 style="font-size:16px;font-weight:700">Vitamina D3</h3><span class="badge" style="background:var(--red-dim);color:var(--red)">Prioridad Alta</span></div>
+        <div class="supp-meta"><div class="supp-meta-box"><div class="supp-meta-label">Dosis</div><div class="supp-meta-value" style="color:var(--accent)">4,000 UI/día</div></div><div class="supp-meta-box"><div class="supp-meta-label">Cuándo tomar</div><div class="supp-meta-value">Con el almuerzo</div></div></div>
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">Tu nivel de 23.2 ng/mL está en el límite inferior. Para hígado graso, la evidencia muestra que niveles ≥40 ng/mL mejoran la sensibilidad insulínica y reducen la inflamación hepática. Tomar con una comida que contenga grasa para mejor absorción.</p>
+        <div style="color:var(--text-dim);font-size:12px">⏱ Duración: Permanente (revaluar en 3-6 meses con examen de sangre)</div>
+      </div>
+
+      <div class="card card-mb">
+        <div class="flex-between mb-12"><h3 style="font-size:16px;font-weight:700">Omega-3 (EPA+DHA)</h3><span class="badge" style="background:var(--red-dim);color:var(--red)">Prioridad Alta</span></div>
+        <div class="supp-meta"><div class="supp-meta-box"><div class="supp-meta-label">Dosis</div><div class="supp-meta-value" style="color:var(--accent)">2-3g/día de EPA+DHA combinados</div></div><div class="supp-meta-box"><div class="supp-meta-label">Cuándo tomar</div><div class="supp-meta-value">1 cáp almuerzo + 1 cena</div></div></div>
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">La evidencia más robusta para reducir grasa intrahepática. EPA y DHA en dosis ≥2g/día han mostrado reducción significativa de triglicéridos hepáticos en estudios clínicos de NAFLD. Además, sin vesícula, fraccionar en 2 tomas mejora tolerancia.</p>
+        <div style="color:var(--text-dim);font-size:12px">⏱ Duración: Mínimo 6 meses, idealmente permanente</div>
+      </div>
+
+      <div class="card card-mb">
+        <div class="flex-between mb-12"><h3 style="font-size:16px;font-weight:700">Vitamina K2 (MK-7)</h3><span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">Prioridad Media</span></div>
+        <div class="supp-meta"><div class="supp-meta-box"><div class="supp-meta-label">Dosis</div><div class="supp-meta-value" style="color:var(--accent)">100-200 mcg/día</div></div><div class="supp-meta-box"><div class="supp-meta-label">Cuándo tomar</div><div class="supp-meta-value">Junto con la vitamina D</div></div></div>
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">Siempre acompañar vitamina D con K2 para dirigir el calcio a los huesos y no a las arterias. Sinergia importante a largo plazo.</p>
+        <div style="color:var(--text-dim);font-size:12px">⏱ Duración: Mientras tomes vitamina D</div>
+      </div>
+
+      <div class="card card-mb">
+        <div class="flex-between mb-12"><h3 style="font-size:16px;font-weight:700">Magnesio (bisglicinato o citrato)</h3><span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">Prioridad Media</span></div>
+        <div class="supp-meta"><div class="supp-meta-box"><div class="supp-meta-label">Dosis</div><div class="supp-meta-value" style="color:var(--accent)">300-400mg/día</div></div><div class="supp-meta-box"><div class="supp-meta-label">Cuándo tomar</div><div class="supp-meta-value">Antes de dormir</div></div></div>
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">Mejora sensibilidad insulínica (relevante por tu HOMA-IR borderline de ~1.74), calidad de sueño y recuperación muscular. La mayoría de la población es deficiente. El bisglicinato no causa molestias digestivas.</p>
+        <div style="color:var(--text-dim);font-size:12px">⏱ Duración: Permanente</div>
+      </div>
+
+      <div class="card card-mb">
+        <div class="flex-between mb-12"><h3 style="font-size:16px;font-weight:700">Silimarina (Cardo Mariano)</h3><span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">Prioridad Media</span></div>
+        <div class="supp-meta"><div class="supp-meta-box"><div class="supp-meta-label">Dosis</div><div class="supp-meta-value" style="color:var(--accent)">420mg/día (2-3 tomas)</div></div><div class="supp-meta-box"><div class="supp-meta-label">Cuándo tomar</div><div class="supp-meta-value">Con comidas principales</div></div></div>
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">Hepatoprotector con evidencia moderada para NAFLD. Actúa como antioxidante y antiinflamatorio a nivel hepático. No interfiere con tus otros indicadores normales.</p>
+        <div style="color:var(--text-dim);font-size:12px">⏱ Duración: 3-6 meses, revaluar con siguiente ecografía</div>
+      </div>
+
+      <div class="card card-mb">
+        <div class="flex-between mb-12"><h3 style="font-size:16px;font-weight:700">Probiótico multi-cepa</h3><span class="badge" style="background:var(--accent-dim);color:var(--accent)">Prioridad Opcional</span></div>
+        <div class="supp-meta"><div class="supp-meta-box"><div class="supp-meta-label">Dosis</div><div class="supp-meta-value" style="color:var(--accent)">1 cápsula/día (&gt;10 billones UFC)</div></div><div class="supp-meta-box"><div class="supp-meta-label">Cuándo tomar</div><div class="supp-meta-value">En ayunas</div></div></div>
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">El eje intestino-hígado es clave en NAFLD. Cepas como Lactobacillus rhamnosus y Bifidobacterium longum tienen evidencia específica para reducir grasa hepática. Post-colecistectomía, los probióticos también ayudan con la digestión.</p>
+        <div style="color:var(--text-dim);font-size:12px">⏱ Duración: 3 meses como prueba, evaluar beneficio subjetivo</div>
+      </div>
+
+      <div class="card grad-orange-yellow">
+        <p style="font-size:13px;line-height:1.7"><strong style="color:var(--orange)">⚕️ Nota importante:</strong> Antes de iniciar suplementación, confirma con tu médico tratante (Dr. Zamorano) que no haya contraindicaciones específicas para tu caso. Estos suplementos no reemplazan la alimentación ni el ejercicio — son el 10% final de la ecuación.</p>
+      </div>
+    </div>
+
+    <!-- ============ ROADMAP ============ -->
+    <div class="section" id="sec-roadmap">
+      <h2 class="section-title">Roadmap — 12 Meses</h2>
+      <p class="section-desc">Plan progresivo dividido en 4 fases. Cada una construye sobre la anterior. El objetivo no es velocidad, es sostenibilidad.</p>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)">1</div>
+          <div class="card">
+            <div class="flex-between mb-12"><h3 style="color:var(--accent);font-size:17px;font-weight:800">Fase 1 — Fundación</h3><span class="badge" style="background:rgba(34,211,238,0.15);color:var(--accent)">Semanas 1-4</span></div>
+            <ul class="content-list">
+              <li>Establecer rutina de alimentación (no perfección, consistencia)</li>
+              <li>Comenzar gym 2x/semana (Día A + Día B)</li>
+              <li>Subir pasos a 7,000/día promedio</li>
+              <li>Iniciar suplementos de alta prioridad (Vit D3 + Omega-3 + K2)</li>
+              <li>Eliminar alcohol completamente</li>
+              <li>Meta peso: mantener o bajar 0.5-1 kg</li>
+            </ul>
+            <div class="kpi-box"><span class="kpi-label">🎯 KPI de fase: </span><span class="kpi-val" style="color:var(--accent)">Crear el hábito. No hay meta de peso agresiva.</span></div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--green)">2</div>
+          <div class="card">
+            <div class="flex-between mb-12"><h3 style="color:var(--green);font-size:17px;font-weight:800">Fase 2 — Aceleración</h3><span class="badge" style="background:rgba(52,211,153,0.15);color:var(--green)">Semanas 5-12</span></div>
+            <ul class="content-list">
+              <li>Subir a 3 sesiones/semana (agregar Día C)</li>
+              <li>Incorporar HIIT 1-2x por semana (ya incluido en Día B)</li>
+              <li>Subir pasos a 8,000-9,000/día</li>
+              <li>Agregar magnesio y silimarina</li>
+              <li>Ajustar alimentación según sensaciones y energía</li>
+              <li>Meta peso: −2 a 3 kg (llegar a ~76-77 kg)</li>
+              <li>Meta grasa: bajar a ~23-24%</li>
+            </ul>
+            <div class="kpi-box"><span class="kpi-label">🎯 KPI de fase: </span><span class="kpi-val" style="color:var(--green)">−1 kg/mes promedio. Más energía. Mejor sueño.</span></div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--yellow)">3</div>
+          <div class="card">
+            <div class="flex-between mb-12"><h3 style="color:var(--yellow);font-size:17px;font-weight:800">Fase 3 — Consolidación</h3><span class="badge" style="background:rgba(251,191,36,0.15);color:var(--yellow)">Semanas 13-24 (mes 4-6)</span></div>
+            <ul class="content-list">
+              <li>Mantener 3 sesiones/semana con progresión de cargas</li>
+              <li>Pasos estables en 9,000-10,000/día</li>
+              <li>Alimentación ya en piloto automático (80/20)</li>
+              <li>Meta peso: −2 a 3 kg más (llegar a ~74-75 kg)</li>
+              <li>Meta grasa: bajar a ~20-22%</li>
+              <li>Repetir exámenes de sangre y ecografía abdominal</li>
+            </ul>
+            <div class="kpi-box"><span class="kpi-label">🎯 KPI de fase: </span><span class="kpi-val" style="color:var(--yellow)">Ecografía sin hígado graso. Ferritina &lt;300. Vitamina D &gt;40.</span></div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--purple)">4</div>
+          <div class="card">
+            <div class="flex-between mb-12"><h3 style="color:var(--purple);font-size:17px;font-weight:800">Fase 4 — Optimización</h3><span class="badge" style="background:rgba(167,139,250,0.15);color:var(--purple)">Mes 7-12</span></div>
+            <ul class="content-list">
+              <li>Ajustar plan según resultados de exámenes del mes 6</li>
+              <li>Evaluar si mantener déficit calórico o ir a mantenimiento</li>
+              <li>Opcional: subir a 4 sesiones/semana si hay tiempo</li>
+              <li>Meta peso: 72-74 kg con ~18-20% grasa (IMC ~24)</li>
+              <li>Meta masa magra: mantener o subir ligeramente (≥59 kg)</li>
+              <li>Reevaluar suplementos (¿bajar dosis Vit D?, ¿seguir silimarina?)</li>
+            </ul>
+            <div class="kpi-box"><span class="kpi-label">🎯 KPI de fase: </span><span class="kpi-val" style="color:var(--purple)">Composición corporal óptima. Indicadores todos en verde.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card grad-green-cyan" style="margin-top:8px">
+        <h3 style="color:var(--green);font-size:15px;font-weight:700;margin-bottom:10px">🏁 Meta Final al Mes 12</h3>
+        <div class="goal-grid">
+          <div class="goal-box"><div class="goal-label">Peso</div><div class="goal-from">79.15 kg</div><div class="goal-to">72-74 kg</div></div>
+          <div class="goal-box"><div class="goal-label">% Grasa</div><div class="goal-from">25.1%</div><div class="goal-to">18-20%</div></div>
+          <div class="goal-box"><div class="goal-label">IMC</div><div class="goal-from">26.8</div><div class="goal-to">~24</div></div>
+          <div class="goal-box"><div class="goal-label">Masa Magra</div><div class="goal-from">59.3 kg</div><div class="goal-to">≥59 kg</div></div>
+          <div class="goal-box"><div class="goal-label">Hígado Graso</div><div class="goal-from">Leve</div><div class="goal-to">Normal</div></div>
+          <div class="goal-box"><div class="goal-label">Vitamina D</div><div class="goal-from">23.2</div><div class="goal-to">≥40 ng/mL</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ METRICS ============ -->
+    <div class="section" id="sec-metrics">
+      <h2 class="section-title">Mis Datos — Evolución</h2>
+      <p class="section-desc">Datos reales de tu balanza inteligente, pasos y calorías activas del último año.</p>
+
+      <div class="card card-mb">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">⚖️ Evolución de Peso (abr 2025 — mar 2026)</h3>
+        <div class="weight-chart" id="weightChart"></div>
+        <div class="flex-between mt-10">
+          <span style="color:var(--text-dim);font-size:12px">Tendencia: <strong style="color:var(--green)">↓ −3.5 kg en los últimos 3 meses</strong></span>
+          <span style="color:var(--text-dim);font-size:12px">Actual: <strong style="color:var(--accent)">79.15 kg</strong></span>
+        </div>
+      </div>
+
+      <div class="card card-mb">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">🚶 Pasos Semanales</h3>
+        <div class="steps-chart" id="stepsChart"></div>
+        <div class="flex-between mt-10">
+          <span style="color:var(--text-dim);font-size:12px">Promedio: <strong style="color:var(--yellow)">~44,200/semana (~6,300/día)</strong></span>
+          <span style="color:var(--text-dim);font-size:12px">Meta: <strong style="color:var(--green)">56,000-70,000/semana (8-10k/día)</strong></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">📊 Composición Corporal — Tendencia 12 meses</h3>
+        <div class="two-cols">
+          <div>
+            <div class="progress-item"><div class="progress-header"><span class="progress-label">% Grasa Corporal</span><span class="progress-val" style="color:var(--yellow)">25.1% (meta: 20%)</span></div><div class="progress-track"><div class="progress-fill" style="width:62.75%;background:var(--yellow)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span class="progress-label">Masa Magra</span><span class="progress-val" style="color:var(--green)">59.3 kg (mantener ≥59)</span></div><div class="progress-track"><div class="progress-fill" style="width:84.7%;background:var(--green)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span class="progress-label">Agua Corporal</span><span class="progress-val" style="color:var(--accent)">50.9% (meta: ≥55%)</span></div><div class="progress-track"><div class="progress-fill" style="width:78.3%;background:var(--accent)"></div></div></div>
+          </div>
+          <div>
+            <div class="progress-item"><div class="progress-header"><span class="progress-label">IMC</span><span class="progress-val" style="color:var(--orange)">26.8 (meta: 24)</span></div><div class="progress-track"><div class="progress-fill" style="width:76.6%;background:var(--orange)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span class="progress-label">% Músculo</span><span class="progress-val" style="color:var(--purple)">71.0% (subir)</span></div><div class="progress-track"><div class="progress-fill" style="width:83.5%;background:var(--purple)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span class="progress-label">Hueso</span><span class="progress-val" style="color:var(--text-dim)">3.0 kg (estable)</span></div><div class="progress-track"><div class="progress-fill" style="width:75%;background:var(--text-dim)"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>⚕️ Este plan no reemplaza la consulta médica profesional. Validar con tu médico tratante antes de implementar cambios significativos.<br>Generado por Dr. Churro · Basado en exámenes reales mayo 2025 — enero 2026</p>
+</footer>
+
+<script>
+// Navigation
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.section).classList.add('active');
+  });
+});
+
+// Collapsible toggle
+function toggleCollapsible(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// Weight Chart (SVG)
+(function() {
+  const data = [
+    {d:"Abr 7",w:81.80},{d:"Abr 14",w:81.15},{d:"Abr 23",w:81.55},
+    {d:"May 5",w:82.20},{d:"May 15",w:80.75},{d:"May 20",w:80.00},
+    {d:"May 28",w:80.65},{d:"Jun 8",w:81.45},{d:"Jun 14",w:80.85},
+    {d:"Jun 24",w:81.05},{d:"Jul 7",w:82.55},{d:"Jul 23",w:80.65},
+    {d:"Ago 10",w:81.55},{d:"Ago 27",w:81.25},{d:"Sep 2",w:80.35},
+    {d:"Sep 13",w:81.70},{d:"Sep 27",w:81.80},{d:"Oct 5",w:81.70},
+    {d:"Oct 28",w:80.50},{d:"Nov 6",w:80.20},{d:"Nov 28",w:82.30},
+    {d:"Dic 1",w:82.65},{d:"Dic 16",w:82.25},{d:"Dic 26",w:81.30},
+    {d:"Ene 9",w:81.30},{d:"Ene 19",w:81.25},{d:"Ene 29",w:80.20},
+    {d:"Feb 9",w:79.95},{d:"Feb 19",w:78.75},{d:"Mar 3",w:79.40},
+    {d:"Mar 10",w:79.35},{d:"Mar 19",w:79.15}
+  ];
+  const minW = Math.min(...data.map(d=>d.w)) - 1;
+  const maxW = Math.max(...data.map(d=>d.w)) + 1;
+  const range = maxW - minW;
+  const svgW = data.length * 24;
+  let svg = `<svg viewBox="0 0 ${svgW} 200" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">`;
+  [78,79,80,81,82,83].forEach(v => {
+    const y = 190 - ((v - minW) / range) * 180;
+    svg += `<line x1="0" x2="${svgW}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,0.06)"/>`;
+    svg += `<text x="2" y="${y-4}" fill="#94a3b8" font-size="9" font-family="DM Sans,sans-serif">${v}</text>`;
+  });
+  const pts = data.map((d,i) => `${i*24+12},${190-((d.w-minW)/range)*180}`).join(' ');
+  svg += `<polyline points="${pts}" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linejoin="round"/>`;
+  data.forEach((d,i) => {
+    const cx = i*24+12, cy = 190-((d.w-minW)/range)*180;
+    const fill = i >= data.length-5 ? '#34d399' : '#22d3ee';
+    svg += `<circle cx="${cx}" cy="${cy}" r="3" fill="${fill}"><title>${d.d}: ${d.w} kg</title></circle>`;
+  });
+  svg += '</svg>';
+  document.getElementById('weightChart').innerHTML = svg;
+})();
+
+// Steps Chart
+(function() {
+  const steps = [62471,47638,49021,59712,75861,46350,38535,50051,50118,46023,40861,45492,39687,27188,35535,32514,60611,48250,37455,51853,37305,44784,50875,45453,41872,50073,64538,32096,38299,34304,44372,45521,47083,33822,32296,46442,47344,42126,39629,67706,31182,41259,36605,47572,27079,36578,58012,43256,42358,42390,46689,32528];
+  const maxS = Math.max(...steps);
+  const container = document.getElementById('stepsChart');
+  steps.forEach(s => {
+    const bar = document.createElement('div');
+    bar.className = 'step-bar';
+    bar.style.height = (s/maxS*100)+'%';
+    bar.style.background = s < 35000 ? '#f87171' : s > 50000 ? '#34d399' : '#22d3ee';
+    bar.title = s.toLocaleString() + ' pasos';
+    container.appendChild(bar);
+  });
+})();
+</script>
+</body>
+</html>
