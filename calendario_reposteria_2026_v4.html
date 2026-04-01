@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calendario Repostería JCG 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0ede8; color: #1a1a1a; }
+
+.layout { display: flex; height: 100vh; overflow: hidden; }
+
+/* ===== SIDEBAR ===== */
+.sidebar { width: 300px; flex-shrink: 0; background: #1a1a1a; color: #fff; display: flex; flex-direction: column; overflow: hidden; }
+.sb-header { padding: 20px 16px 12px; border-bottom: 1px solid #2d2d2d; }
+.sb-header h1 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.sb-header p  { font-size: 10px; color: #666; }
+
+.sb-annual { padding: 14px 16px; border-bottom: 1px solid #2d2d2d; }
+.sb-section-title { font-size: 9px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px; }
+.sb-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.sb-card { background: #242424; border-radius: 8px; padding: 9px 10px; }
+.sb-card-label { font-size: 9px; color: #666; margin-bottom: 3px; }
+.sb-card-val   { font-size: 15px; font-weight: 700; color: #fff; }
+.sb-card-sub   { font-size: 9px; color: #444; margin-top: 1px; }
+
+.sb-bar { height: 6px; border-radius: 3px; overflow: hidden; display: flex; margin-bottom: 6px; }
+.sb-bar-seg { height: 100%; }
+.sb-bar-legend { display: flex; flex-direction: column; gap: 3px; }
+.sb-leg { display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: #666; }
+.sb-leg-left { display: flex; align-items: center; gap: 5px; }
+.sb-leg-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+.sb-leg-val { color: #888; }
+
+/* EVENTS CONFIG */
+.sb-events { flex: 1; overflow-y: auto; padding: 12px 16px; }
+.sb-events::-webkit-scrollbar { width: 4px; }
+.sb-events::-webkit-scrollbar-track { background: #111; }
+.sb-events::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+.ev-card { background: #222; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; border-left: 3px solid #444; }
+.ev-card-header { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; cursor: pointer; }
+.ev-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.ev-name { font-size: 11px; font-weight: 700; color: #fff; flex: 1; }
+.ev-date { font-size: 9px; color: #555; }
+.ev-toggle { font-size: 10px; color: #555; transition: transform .2s; }
+.ev-toggle.open { transform: rotate(180deg); }
+.ev-body { display: none; }
+.ev-body.open { display: block; }
+.ev-field { margin-bottom: 7px; }
+.ev-field label { display: block; font-size: 9px; color: #666; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .4px; }
+.ev-field input { width: 100%; background: #2a2a2a; border: 1px solid #333; border-radius: 5px; padding: 5px 8px; font-size: 11px; color: #fff; font-family: inherit; }
+.ev-field input:focus { outline: none; border-color: #555; }
+.ev-field .hint { font-size: 9px; color: #444; margin-top: 2px; }
+
+/* ===== MAIN ===== */
+.main { flex: 1; overflow-y: auto; padding: 20px 20px; }
+
+.month-nav { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 16px; }
+.mnav-btn { font-size: 10px; font-weight: 600; padding: 4px 11px; border: 1.5px solid #d5d2cc; border-radius: 20px; background: #fff; color: #666; cursor: pointer; transition: all .15s; }
+.mnav-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.mnav-btn:hover:not(.active) { background: #e8e5e0; }
+
+.legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; background: #fff; border-radius: 8px; padding: 8px 14px; border: 1px solid #e2dfda; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #444; font-weight: 500; }
+.leg-box { width: 22px; height: 11px; border-radius: 2px; flex-shrink: 0; }
+
+/* CALENDAR */
+.cal-wrap { background: #fff; border: 2px solid #1a1a1a; margin-bottom: 20px; }
+.cal-month-header { border-bottom: 1px solid #e0ddd8; }
+.cal-month-top { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px 6px; }
+.cal-month-name { font-size: 15px; font-weight: 700; }
+.cal-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.fecha-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 3px; color: #fff; }
+.cal-month-bottom { display: flex; align-items: flex-start; justify-content: space-between; padding: 4px 12px 8px; gap: 8px; }
+.cal-target-block { }
+.cal-target-label { font-size: 9px; color: #aaa; }
+.cal-target-val   { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+.cal-target-sub   { font-size: 9px; color: #bbb; }
+.cal-fecha-block  { text-align: right; }
+.cal-fecha-label  { font-size: 9px; color: #aaa; }
+.cal-fecha-val    { font-size: 13px; font-weight: 700; }
+.cal-fecha-sub    { font-size: 9px; color: #bbb; }
+
+.day-headers { display: grid; grid-template-columns: repeat(7,1fr); background: #1a1a1a; }
+.day-hdr { color: #fff; font-size: 9px; font-weight: 700; text-align: center; padding: 6px 2px; letter-spacing: .6px; text-transform: uppercase; border-right: 1px solid #333; }
+.day-hdr:last-child { border-right: none; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); }
+.cal-cell { min-height: 82px; border-right: 1px solid #d8d5d0; border-bottom: 1px solid #d8d5d0; padding: 5px 4px 3px; background: #fff; }
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell.empty   { background: #f8f7f4; }
+.cal-cell.feriado { background: #FFFDE7; }
+.cal-cell.weekend { background: #f8f7f4; }
+.cal-cell.today   { background: #FFF8F0; outline: 3px solid #FF6D00; outline-offset: -3px; }
+
+.day-num { font-size: 12px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px; display: flex; align-items: center; gap: 3px; }
+.today-pill { font-size: 7px; font-weight: 700; background: #FF6D00; color: #fff; border-radius: 8px; padding: 1px 4px; letter-spacing: .3px; }
+.cal-cell.empty .day-num { color: #ccc; }
+.feriado-label { font-size: 7px; font-weight: 700; color: #856404; background: #FFF3CD; padding: 1px 3px; border-radius: 2px; margin-bottom: 2px; display: inline-block; text-transform: uppercase; }
+.event-bar { display: block; border-radius: 2px; padding: 1px 4px; margin-bottom: 2px; font-size: 8px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5; }
+.event-bar.pub  { border-left: 3px solid #D4537E; background: #FCE8F0; color: #993556; }
+.event-bar.ig   { border-left: 3px solid #378ADD; background: #E6F1FB; color: #0C447C; }
+.event-bar.del  { border-left: 3px solid #EF9F27; background: #FEF3E2; color: #854F0B; }
+.event-bar.event{ color: #fff; font-size: 8px; font-weight: 700; padding: 2px 5px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar">
+  <div class="sb-header">
+    <h1>Repostería JCG 2026</h1>
+    <p>Planificación fechas especiales</p>
+  </div>
+
+  <div class="sb-annual" id="sb-annual"></div>
+
+  <div class="sb-events" id="sb-events"></div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+  <div class="legend">
+    <div class="leg"><div class="leg-box" style="background:#FCE8F0;border-left:3px solid #D4537E"></div>Publicación (-12d)</div>
+    <div class="leg"><div class="leg-box" style="background:#E6F1FB;border-left:3px solid #378ADD"></div>Instagram (-11 a -6d)</div>
+    <div class="leg"><div class="leg-box" style="background:#FEF3E2;border-left:3px solid #EF9F27"></div>Entregas (-3d)</div>
+    <div class="leg"><div class="leg-box" style="background:#D4537E"></div>Fecha especial</div>
+    <div class="leg"><div class="leg-box" style="background:#FFFDE7;border:1px solid #e0d86a"></div>Feriado</div>
+    <div class="leg"><div class="leg-box" style="background:#FFF8F0;outline:2px solid #FF6D00;outline-offset:-2px"></div>Hoy</div>
+  </div>
+  <div class="month-nav" id="month-nav"></div>
+  <div id="calendars"></div>
+</div>
+</div>
+
+<script>
+const MN_FULL  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MN_SHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+
+const TODAY = new Date();
+const TODAY_KEY = `${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
+
+function d2k(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function addD(str,n){ const d=new Date(str+'T12:00:00'); d.setDate(d.getDate()+n); return d2k(d.getFullYear(),d.getMonth()+1,d.getDate()); }
+function fmtCLP(n){ return '$'+Math.round(n).toLocaleString('es-CL'); }
+function fmtK(n){ return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+Math.round(n/1000)+'K'; }
+function parseMiles(str){ return parseFloat(String(str).replace(/\./g,'').replace(',','.').replace(/[^0-9.]/g,''))||0; }
+
+/* ---- FECHAS (estado mutable) ---- */
+const FECHAS = [
+  {id:'sv',  name:'San Valentín',    short:'S.Valentín', date:'2026-02-14', color:'#D4537E', dDays:3, targetFecha:1200000,  pUnit:10647},
+  {id:'mj',  name:'Día de la Mujer', short:'Día Mujer',  date:'2026-03-08', color:'#7F77DD', dDays:2, targetFecha:500000,   pUnit:9000},
+  {id:'ss',  name:'Semana Santa',    short:'S.Santa',    date:'2026-04-03', color:'#3C3489', dDays:3, targetFecha:3200000,  pUnit:14000},
+  {id:'mm',  name:'Día de la Mamá',  short:'Día Mamá',   date:'2026-05-10', color:'#D85A30', dDays:3, targetFecha:4500000,  pUnit:15648},
+  {id:'pp',  name:'Día del Papá',    short:'Día Papá',   date:'2026-06-21', color:'#185FA5', dDays:3, targetFecha:2200000,  pUnit:20000},
+  {id:'dn',  name:'Día del Niño',    short:'Día Niño',   date:'2026-08-02', color:'#0F6E56', dDays:3, targetFecha:2500000,  pUnit:17000},
+  {id:'fp',  name:'Fiestas Patrias', short:'F.Patrias',  date:'2026-09-18', color:'#3B6D11', dDays:3, targetFecha:5800000,  pUnit:21000},
+  {id:'dp',  name:'Día del Profesor',short:'Día Prof.',  date:'2026-10-16', color:'#534AB7', dDays:2, targetFecha:1100000,  pUnit:10000},
+  {id:'hw',  name:'Halloween',       short:'Halloween',  date:'2026-10-31', color:'#993C1D', dDays:2, targetFecha:120000,   pUnit:6000},
+  {id:'nav', name:'Navidad',         short:'Navidad',    date:'2026-12-25', color:'#0C447C', dDays:3, targetFecha:7000000,  pUnit:19500},
+];
+
+/* Target mensual = real 2025 × 1.20 */
+const REAL_2025 = {1:3073800,2:4008870,3:4169057,4:6010148,5:7778409,6:5864884,7:5280838,8:6149564,9:7729065,10:6846678,11:5040740,12:9516080};
+const TARGET_MES = {};
+Object.keys(REAL_2025).forEach(m=>{ TARGET_MES[+m] = Math.round(REAL_2025[+m]*1.20); });
+
+const FERIADOS = {
+  '2026-01-01':'Año Nuevo','2026-04-03':'Viernes Santo','2026-04-04':'Sábado Santo',
+  '2026-05-01':'Día del Trabajo','2026-05-21':'Glorias Navales',
+  '2026-06-21':'Pueblos Indígenas','2026-06-29':'San Pedro y San Pablo',
+  '2026-07-16':'Virgen del Carmen','2026-08-15':'Asunción Virgen',
+  '2026-09-18':'Fiestas Patrias','2026-09-19':'Glorias del Ejército',
+  '2026-10-12':'Encuentro Dos Mundos','2026-10-31':'Ig. Evangélicas',
+  '2026-11-01':'Todos los Santos','2026-11-02':'Día de los Muertos',
+  '2026-12-08':'Inmaculada Concepción','2026-12-25':'Navidad',
+};
+
+/* ---- BUILD EVENTS MAP ---- */
+function buildEventsMap(){
+  const EV = {};
+  function add(key,ev){ if(!EV[key]) EV[key]=[]; EV[key].push(ev); }
+  FECHAS.forEach(f=>{
+    add(addD(f.date,-12), {label:'Pub: '+f.name, type:'pub'});
+    for(let i=11;i>=6;i--) add(addD(f.date,-i), {label:'IG: '+f.name, type:'ig'});
+    for(let i=3;i>=-(f.dDays-1);i--) add(addD(f.date,-i), {label:'Entregas: '+f.name, type:'del'});
+    add(f.date, {label:f.name+' · '+fmtK(f.targetFecha), type:'event', color:f.color, name:f.name});
+  });
+  return EV;
+}
+
+/* ---- SIDEBAR ANNUAL ---- */
+function renderAnnual(){
+  const totalMes   = Object.values(TARGET_MES).reduce((s,v)=>s+v,0);
+  const totalReal  = Object.values(REAL_2025).reduce((s,v)=>s+v,0);
+  const totalFecha = FECHAS.reduce((s,f)=>s+f.targetFecha,0);
+  const totalFechaReal = Object.values(REAL_2025).reduce((s,v)=>s+v,0);
+
+  const barSegs = FECHAS.map(f=>{
+    const pct=(f.targetFecha/totalFecha*100).toFixed(1);
+    return `<div class="sb-bar-seg" style="width:${pct}%;background:${f.color}"></div>`;
+  }).join('');
+  const legItems = FECHAS.map(f=>
+    `<div class="sb-leg"><div class="sb-leg-left"><div class="sb-leg-dot" style="background:${f.color}"></div>${f.short}</div><span class="sb-leg-val">${fmtK(f.targetFecha)}</span></div>`
+  ).join('');
+
+  document.getElementById('sb-annual').innerHTML = `
+    <div class="sb-section-title">Resumen anual</div>
+    <div class="sb-cards">
+      <div class="sb-card"><div class="sb-card-label">Real 2025</div><div class="sb-card-val">${fmtK(totalReal)}</div><div class="sb-card-sub">base</div></div>
+      <div class="sb-card"><div class="sb-card-label">Target 2026</div><div class="sb-card-val">${fmtK(totalMes)}</div><div class="sb-card-sub">+20% mensual</div></div>
+      <div class="sb-card"><div class="sb-card-label">Fechas esp.</div><div class="sb-card-val">${fmtK(totalFecha)}</div><div class="sb-card-sub">suma targets</div></div>
+      <div class="sb-card"><div class="sb-card-label">Crecimiento</div><div class="sb-card-val">+20%</div><div class="sb-card-sub">${fmtK(totalMes-totalReal)} más</div></div>
+    </div>
+    <div class="sb-bar-label" style="font-size:9px;color:#555;margin-bottom:4px">Distribución por fecha especial</div>
+    <div class="sb-bar">${barSegs}</div>
+    <div class="sb-bar-legend" style="margin-top:6px">${legItems}</div>
+  `;
+}
+
+/* ---- SIDEBAR EVENTS CONFIG ---- */
+function renderEventsConfig(){
+  const container = document.getElementById('sb-events');
+  container.innerHTML = `<div class="sb-section-title" style="margin-bottom:10px">Configurar fechas especiales</div>`;
+  FECHAS.forEach((f,idx)=>{
+    const div = document.createElement('div');
+    div.className = 'ev-card';
+    div.style.borderLeftColor = f.color;
+    const dateLabel = new Date(f.date+'T12:00:00').toLocaleDateString('es-CL',{day:'numeric',month:'short'});
+    div.innerHTML = `
+      <div class="ev-card-header" onclick="toggleEv('${f.id}')">
+        <div class="ev-dot" style="background:${f.color}"></div>
+        <div class="ev-name">${f.name}</div>
+        <div class="ev-date">${dateLabel}</div>
+        <div class="ev-toggle" id="tog-${f.id}">▼</div>
+      </div>
+      <div class="ev-body" id="body-${f.id}">
+        <div class="ev-field">
+          <label>Target venta ($)</label>
+          <input type="text" id="inp-target-${f.id}" value="${f.targetFecha.toLocaleString('es-CL')}" onchange="updateFecha('${f.id}','targetFecha',this.value)" />
+          <div class="hint">Ej: 1.200.000</div>
+        </div>
+        <div class="ev-field">
+          <label>Precio unitario prom. ($)</label>
+          <input type="text" id="inp-punit-${f.id}" value="${f.pUnit.toLocaleString('es-CL')}" onchange="updateFecha('${f.id}','pUnit',this.value)" />
+        </div>
+        <div class="ev-field">
+          <label>Días de entrega</label>
+          <input type="number" min="1" max="7" id="inp-ddays-${f.id}" value="${f.dDays}" onchange="updateFecha('${f.id}','dDays',this.value)" />
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function toggleEv(id){
+  const body = document.getElementById('body-'+id);
+  const tog  = document.getElementById('tog-'+id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  tog.classList.toggle('open', !isOpen);
+}
+
+function updateFecha(id, field, rawVal){
+  const f = FECHAS.find(x=>x.id===id);
+  if(!f) return;
+  if(field==='targetFecha'||field==='pUnit') f[field] = parseMiles(rawVal);
+  else if(field==='dDays') f[field] = Math.max(1,parseInt(rawVal)||1);
+  renderAnnual();
+  renderCals();
+}
+
+/* ---- BUILD MONTH ---- */
+let visibleMonths = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+function buildMonth(month){
+  const EV = buildEventsMap();
+  const y=2026;
+  const firstDay = new Date(y,month-1,1);
+  const daysInMonth = new Date(y,month,0).getDate();
+  const startDow = (firstDay.getDay()+6)%7;
+
+  const tmFechas = FECHAS.filter(f=>parseInt(f.date.split('-')[1])===month);
+  const targetMes = TARGET_MES[month]||0;
+  const real2025  = REAL_2025[month]||0;
+  const totalFechaMes = tmFechas.reduce((s,f)=>s+f.targetFecha,0);
+
+  const badgesHtml = tmFechas.map(f=>
+    `<span class="fecha-badge" style="background:${f.color}">${f.short}: ${fmtK(f.targetFecha)}</span>`
+  ).join('');
+
+  const fechaBlock = totalFechaMes>0
+    ? `<div class="cal-fecha-block">
+        <div class="cal-fecha-label">Target fecha especial</div>
+        <div class="cal-fecha-val" style="color:${tmFechas[0].color}">${fmtCLP(totalFechaMes)}</div>
+        <div class="cal-fecha-sub">${tmFechas.map(f=>f.short).join(' + ')}</div>
+       </div>`
+    : `<div class="cal-fecha-block"><div class="cal-fecha-label">Sin fecha especial</div><div class="cal-fecha-val" style="color:#ddd">—</div></div>`;
+
+  let html = `<div class="cal-wrap" id="month-${month}">
+    <div class="cal-month-header">
+      <div class="cal-month-top">
+        <span class="cal-month-name">${MN_FULL[month-1]} 2026</span>
+        <div class="cal-badges">${badgesHtml}</div>
+      </div>
+      <div class="cal-month-bottom">
+        <div class="cal-target-block">
+          <div class="cal-target-label">Target total del mes</div>
+          <div class="cal-target-val">${fmtCLP(targetMes)}</div>
+          <div class="cal-target-sub">real 2025: ${fmtCLP(real2025)} × 1.20</div>
+        </div>
+        ${fechaBlock}
+      </div>
+    </div>
+    <div class="day-headers">${DAYS.map(d=>`<div class="day-hdr">${d}</div>`).join('')}</div>
+    <div class="cal-grid">`;
+
+  for(let e=0;e<startDow;e++) html+='<div class="cal-cell empty"></div>';
+
+  for(let day=1;day<=daysInMonth;day++){
+    const key = d2k(y,month,day);
+    const dow = (startDow+day-1)%7;
+    const isWeekend = dow>=5;
+    const isFeriado = !!FERIADOS[key];
+    const isToday   = key===TODAY_KEY;
+    const evs = EV[key]||[];
+
+    let cls='cal-cell';
+    if(isToday) cls+=' today';
+    else if(isFeriado) cls+=' feriado';
+    else if(isWeekend) cls+=' weekend';
+
+    html+=`<div class="${cls}">`;
+    html+=`<div class="day-num">${day}${isToday?'<span class="today-pill">HOY</span>':''}</div>`;
+    if(isFeriado) html+=`<span class="feriado-label">${FERIADOS[key]}</span>`;
+
+    const eventNames = evs.filter(e=>e.type==='event').map(e=>e.name||'');
+    const filtered = evs.filter(e=>{
+      if(e.type==='event') return true;
+      const nm = e.label.replace('Pub: ','').replace('IG: ','').replace('Entregas: ','');
+      return !eventNames.includes(nm);
+    });
+    filtered.sort((a,b)=>({event:0,pub:1,ig:2,del:3}[a.type]-{event:0,pub:1,ig:2,del:3}[b.type]));
+    filtered.forEach(ev=>{
+      const s = ev.label.length>24 ? ev.label.substring(0,22)+'…' : ev.label;
+      if(ev.type==='event') html+=`<span class="event-bar event" style="background:${ev.color}">${s}</span>`;
+      else html+=`<span class="event-bar ${ev.type}">${s}</span>`;
+    });
+    html+='</div>';
+  }
+  const rem = (7-(startDow+daysInMonth)%7)%7;
+  for(let r=0;r<rem;r++) html+='<div class="cal-cell empty"></div>';
+  html+='</div></div>';
+  return html;
+}
+
+/* ---- NAV & RENDER ---- */
+function renderNav(){
+  document.getElementById('month-nav').innerHTML =
+    `<button class="mnav-btn${visibleMonths.length===12?' active':''}" onclick="showAll()">Todos</button>`
+    + [1,2,3,4,5,6,7,8,9,10,11,12].map(m=>
+        `<button class="mnav-btn${visibleMonths.length===1&&visibleMonths[0]===m?' active':''}" onclick="showMonth(${m})">${MN_SHORT[m-1]}</button>`
+      ).join('');
+}
+function renderCals(){
+  document.getElementById('calendars').innerHTML = visibleMonths.map(m=>buildMonth(m)).join('');
+}
+function showAll(){ visibleMonths=[1,2,3,4,5,6,7,8,9,10,11,12]; renderNav(); renderCals(); }
+function showMonth(m){ visibleMonths=[m]; renderNav(); renderCals(); }
+
+/* ---- INIT ---- */
+renderAnnual();
+renderEventsConfig();
+renderNav();
+renderCals();
+
+setTimeout(()=>{
+  const el = document.getElementById('month-'+(TODAY.getMonth()+1));
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+},200);
+</script>
+</body>
+</html>
